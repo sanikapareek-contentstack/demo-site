@@ -1,4 +1,4 @@
-export default function users(request, response){
+export default function handler(request, response){
   const users= [
     {name: 'Sanika', age: '22'},
     {name: 'Siddhi', age:'22'},
