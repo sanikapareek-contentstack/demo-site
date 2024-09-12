@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node --version",
     "start": "next start",
     "lint": "next lint"
   },
@@ -20,6 +20,6 @@
     "tailwindcss": "^3.3.0"
   },
   "engines": {
-    "node": "21.7.3"
+    "node": "20.x"
   }
 }
