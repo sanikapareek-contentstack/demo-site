@@ -1,7 +1,12 @@
+import { faker } from '@faker-js/faker';
+
 export default async function handler(req, context) {
   const parsedUrl = new URL(req.url);
   const route = parsedUrl.pathname;
   const envVariable = context.env.TEST_KEY;
+
+  const firstRandom = faker.number.int();
+  console.log("🚀 ~ handler ~ firstRandom:", firstRandom)
 
   if (route === '/test') {
     console.log("Inside /test");
