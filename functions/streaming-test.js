@@ -39,7 +39,6 @@ Thank you for testing the streaming API endpoint!`;
   response.setHeader('Connection', 'keep-alive');
   
   // Explicitly disable compression for streaming
-  response.setHeader('Content-Encoding', 'identity');
   response.setHeader('X-Accel-Buffering', 'no');
   response.setHeader('X-Content-Type-Options', 'nosniff');
   
