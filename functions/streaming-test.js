@@ -38,8 +38,14 @@ Thank you for testing the streaming API endpoint!`;
   response.setHeader('Expires', '0');
   response.setHeader('Connection', 'keep-alive');
   
-  // Don't set Transfer-Encoding manually - let Node.js handle it
-  // Remove any automatic Content-Length calculation
+  // Explicitly disable compression for streaming
+  response.setHeader('Content-Encoding', 'identity');
+  response.setHeader('X-Accel-Buffering', 'no');
+  response.setHeader('X-Content-Type-Options', 'nosniff');
+  
+  // For chunked transfer encoding - let Node.js handle this automatically
+  // Node.js will set Transfer-Encoding: chunked when we don't set Content-Length
+  // Note: Content-Encoding (compression) ≠ Transfer-Encoding (chunking)
   response.removeHeader('Content-Length');
   
   // Start the response and flush headers immediately
