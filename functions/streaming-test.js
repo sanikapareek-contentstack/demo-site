@@ -1,21 +1,32 @@
 export default async function handler(request, response) {
   const { speed } = request.query;
   
-  // Set speed delays in milliseconds
+  // Set speed delays in milliseconds based on cloud provider
+  const cloudProvider = process.env.CLOUD_PROVIDER || 'aws';
+  
+  // Platform-specific fast streaming thresholds
+  const fastThresholds = {
+    azure: 75,   // Azure Functions minimum threshold
+    gcp: 100,    // GCP Cloud Functions minimum threshold  
+    aws: 50      // AWS Lambda works with faster streaming
+  };
+  
+  const fastSpeed = fastThresholds[cloudProvider.toLowerCase()] || 50; // Default to AWS
+  
   const speeds = {
     slow: 300,
     medium: 150,
-    fast: 75
+    fast: fastSpeed
   };
   
   // Check if valid speed parameter is provided
   const isValidSpeed = speed && speeds.hasOwnProperty(speed);
   const delay = speeds[speed];
   
-  // Sample text
+  // Sample text with dynamic fast speed description
   const text = `Welcome to the streaming API demo! This is a test of word-by-word streaming functionality. 
 You can control the speed using the speed parameter. The slow option adds a 300ms delay between each word. 
-The medium speed uses 150ms delays for a balanced streaming experience. The fast option streams at 75ms intervals. 
+The medium speed uses 150ms delays for a balanced streaming experience. The fast option streams at ${fastSpeed}ms intervals (optimized for ${cloudProvider.toUpperCase()}). 
 This allows you to see how different streaming speeds affect the user experience. 
 Thank you for testing the streaming API endpoint!`;
   
