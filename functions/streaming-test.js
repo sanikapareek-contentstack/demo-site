@@ -5,7 +5,7 @@ export default async function handler(request, response) {
   const speeds = {
     slow: 300,
     medium: 150,
-    fast: 50
+    fast: 75
   };
   
   // Check if valid speed parameter is provided
@@ -15,7 +15,7 @@ export default async function handler(request, response) {
   // Sample text
   const text = `Welcome to the streaming API demo! This is a test of word-by-word streaming functionality. 
 You can control the speed using the speed parameter. The slow option adds a 300ms delay between each word. 
-The medium speed uses 150ms delays for a balanced streaming experience. The fast option streams at 50ms intervals. 
+The medium speed uses 150ms delays for a balanced streaming experience. The fast option streams at 75ms intervals. 
 This allows you to see how different streaming speeds affect the user experience. 
 Thank you for testing the streaming API endpoint!`;
   
