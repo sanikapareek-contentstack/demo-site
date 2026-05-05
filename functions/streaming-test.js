@@ -26,8 +26,8 @@ export default async function handler(request, response) {
   // Sample text with dynamic fast speed description
   const text = `Welcome to the streaming API demo! This is a test of word-by-word streaming functionality. 
 You can control the speed using the speed parameter. The slow option adds a 300ms delay between each word. 
-The medium speed uses 150ms delays for a balanced streaming experience. The fast option streams at ${fastSpeed}ms intervals (optimized for ${cloudProvider.toUpperCase()}). 
-This allows you to see how different streaming speeds affect the user experience. 
+The medium speed uses 150ms delays for a balanced streaming experience. The fast option streams at ${fastSpeed}ms intervals with 3-word chunks (optimized for ${cloudProvider.toUpperCase()} platform buffering). 
+This allows you to see how different streaming speeds and chunking strategies affect the user experience. 
 Thank you for testing the streaming API endpoint!`;
   
   // Set common headers
@@ -65,13 +65,20 @@ Thank you for testing the streaming API endpoint!`;
   // Split text into words
   const words = text.split(' ');
   
-  // Stream words with specified delay
-  for (let i = 0; i < words.length; i++) {
-    const word = words[i];
-    response.write(word);
+  // Use larger chunks for fast mode to overcome platform buffering
+  // Fast mode sends 3 words per chunk to cross cloud platform minimum buffering thresholds
+  // Slow/medium modes send 1 word per chunk for granular streaming
+  const wordsPerChunk = speed === 'fast' ? 3 : 1;
+  
+  // Stream words/chunks with specified delay
+  for (let i = 0; i < words.length; i += wordsPerChunk) {
+    // Create chunk with multiple words for fast mode, single word for others
+    const chunk = words.slice(i, i + wordsPerChunk).join(' ');
+    response.write(chunk);
     
-    // Add space after word (except for the last word)
-    if (i < words.length - 1) {
+    // Add space after chunk (except for the last chunk)
+    const isLastChunk = i + wordsPerChunk >= words.length;
+    if (!isLastChunk) {
       response.write(' ');
     }
     
@@ -80,8 +87,8 @@ Thank you for testing the streaming API endpoint!`;
       response.flush();
     }
     
-    // Add delay before next word (except after last word)
-    if (i < words.length - 1) {
+    // Add delay before next chunk (except after last chunk)
+    if (!isLastChunk) {
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
