@@ -1,6 +1,50 @@
 export default async function handler(request, response) {
-  const { speed } = request.query;
-  
+  const { speed, "long-running": longRunning } = request.query;
+
+  if (longRunning === 'true') {
+    response.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    response.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.setHeader('Pragma', 'no-cache');
+    response.setHeader('Expires', '0');
+    response.setHeader('Connection', 'keep-alive');
+    response.setHeader('X-Accel-Buffering', 'no');
+    response.setHeader('X-Content-Type-Options', 'nosniff');
+    response.removeHeader('Content-Length');
+
+    response.writeHead(200);
+    response.flushHeaders();
+
+    const totalDurationMs = 20 * 60 * 1000;
+    const chunkIntervalMs = 50;
+    const startedAt = Date.now();
+    let chunkIndex = 0;
+    let aborted = false;
+
+    const onClose = () => { aborted = true; };
+    request.on('close', onClose);
+    response.on('close', onClose);
+
+    while (!aborted) {
+      const elapsedMs = Date.now() - startedAt;
+      if (elapsedMs >= totalDurationMs) break;
+
+      response.write(`chunk=${chunkIndex} elapsed_ms=${elapsedMs}\n`);
+      if (response.flush) response.flush();
+      chunkIndex++;
+
+      await new Promise(resolve => setTimeout(resolve, chunkIntervalMs));
+    }
+
+    request.off('close', onClose);
+    response.off('close', onClose);
+
+    if (!aborted) {
+      response.end(`done total_chunks=${chunkIndex} elapsed_ms=${Date.now() - startedAt}\n`);
+    }
+    return;
+  }
+
   // Set speed delays in milliseconds based on cloud provider
   const cloudProvider = process.env.CLOUD_PROVIDER || 'aws';
   
