@@ -60,7 +60,8 @@ export default async function handler(request, response) {
   const speeds = {
     slow: 300,
     medium: 150,
-    fast: fastSpeed
+    fast: fastSpeed,
+    delay: 150,
   };
   
   // Check if valid speed parameter is provided
@@ -105,6 +106,10 @@ Thank you for testing the streaming API endpoint!`;
   // Start the response and flush headers immediately
   response.writeHead(200);
   response.flushHeaders();
+
+  if (speed === 'delay') {
+    await new Promise((resolve) => setTimeout(resolve, 35000));
+  }
   
   // Split text into words
   const words = text.split(' ');
