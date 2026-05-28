@@ -103,13 +103,12 @@ Thank you for testing the streaming API endpoint!`;
   // Note: Content-Encoding (compression) ≠ Transfer-Encoding (chunking)
   response.removeHeader('Content-Length');
   
-  // Start the response and flush headers immediately
-  response.writeHead(200);
-  response.flushHeaders();
-
   if (speed === 'delay') {
     await new Promise((resolve) => setTimeout(resolve, 35000));
   }
+
+  response.writeHead(200);
+  response.flushHeaders();
   
   // Split text into words
   const words = text.split(' ');
