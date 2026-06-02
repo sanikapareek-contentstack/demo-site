@@ -104,7 +104,7 @@ Thank you for testing the streaming API endpoint!`;
   response.removeHeader('Content-Length');
   
   if (speed === 'delay') {
-    await new Promise((resolve) => setTimeout(resolve, 75000));
+    await new Promise((resolve) => setTimeout(resolve, 20000));
   }
 
   response.writeHead(200);
