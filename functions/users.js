@@ -3,7 +3,9 @@ export default function handler(request, response) {
   const users = [
     { name: 'sanika' },
     { name: 'siddhi' },
-    { name: 'shravani' }
+    { name: 'shravani' },
+        { name: 'Anuja' },
+        { name: 'Aryan' },
   ];
 
   console.log("query params", request.query)
